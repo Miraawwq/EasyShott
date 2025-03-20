@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShot - Modern Screenshot Tool</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px var(--primary-color); }
+            50% { box-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--accent-color); }
+            100% { box-shadow: 0 0 5px var(--primary-color); }
+        }
+        
+        @keyframes highlight {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        :root {
+    --primary-color: #8A2BE2; /* Фиолетовый */
+    --secondary-color: #4B0082; /* Индиго */
+    --background-color: #121212; /* Очень темный фон */
+    --text-color: #E0E0E0; /* Светло-серый для текста */
+    --accent-color: #9370DB; /* Средний фиолетовый */
+    --highlight-color: #B24BF3; /* Яркий фиолетовый */
+    --section-bg: rgba(255, 255, 255, 0.1); /* Легкая полупрозрачность белого для секций */
+    --animation-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Плавная анимация */
+}
+
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            padding: 20px 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: transform 0.3s var(--animation-timing);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo span {
+            color: var(--accent-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s var(--animation-timing);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: -1;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(75, 0, 130, 0.4);
+        }
+        
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('http://192.168.51.26:5000') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, var(--background-color) 150%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideUp 1s var(--animation-timing) forwards;
+            opacity: 0;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #e0e0e0;
+            animation: slideUp 1s 0.2s var(--animation-timing) forwards;
+            opacity: 0;
+        }
+        
+        .hero .btn {
+            animation: slideUp 1s 0.4s var(--animation-timing) forwards;
+            opacity: 0;
+        }
+        
+        /* Demo Area Section */
+        .demo-area {
+    position: relative;
+    height: 400px;
+    max-width: 800px;
+    margin: 60px auto 0;
+    background: linear-gradient(135deg, rgba(42, 26, 107, 0.9), rgba(58, 40, 126, 0.8), rgba(74, 62, 133, 0.8)); /* Многослойный градиент */
+    background-size: cover;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); /* Умеренная тень */
+}
+
+.screen-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('http://192.168.51.26:5000') no-repeat center center;
+    background-size: cover;
+    filter: brightness(0.6); /* Затемняем изображение для лучшего контраста */
+}
+
+.selection-area {
+    position: absolute;
+    border: 2px dashed var(--highlight-color);
+    background-color: rgba(138, 43, 226, 0.3); /* Легкая прозрачность для фиолетового */
+    display: none;
+    pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(42, 26, 107, 0.7); /* Темно-фиолетовая мягкая тень */
+}
+
+.crosshair {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    pointer-events: none;
+    display: none;
+    z-index: 3;
+}
+
+.crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background-color: var(--highlight-color); /* Яркий фиолетовый акцент */
+}
+
+.crosshair::before {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.crosshair::after {
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+        
+        .toolbar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .tool-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--section-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--animation-timing);
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 60px;
+            color: #b0b0b0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--animation-timing);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--section-bg);
+            padding: 30px;
+            border-radius: 10px;
+            transition: all 0.5s var(--animation-timing);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+            transition: height 0.5s ease;
+        }
+        
+        .feature-card:hover::before {
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+        
+        .feature-card p {
+            color: #b0b0b0;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 100px 0;
+            background-color: rgba(138, 43, 226, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s var(--animation-timing);
+        }
+        
+        .step:nth-child(even) {
+            transform: translateX(50px);
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover .step-number {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.4);
+        }
+        
+        .step-content {
+            flex: 1;
+            background-color: var(--section-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover .step-content {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+        
+        .step-content p {
+            color: #b0b0b0;
+        }
+        
+        /* Keyboard Shortcuts Section */
+        .shortcuts {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .shortcuts::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .shortcuts-container {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--animation-timing);
+        }
+        
+        .shortcuts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            max-width: 800px;
+            background-color: var(--section-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .shortcuts-table th,
+        .shortcuts-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .shortcuts-table th {
+            background: linear-gradient(90deg, var(--secondary-color), transparent);
+            color: white;
+            font-size: 18px;
+        }
+        
+        .shortcuts-table tr {
+            transition: all 0.3s ease;
+        }
+        
+        .shortcuts-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .shortcuts-table tr:hover td {
+            color: var(--accent-color);
+        }
+        
+        .kbd {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 0 3px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .shortcuts-table tr:hover .kbd {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Testimonials Section */
+        .testimonials {
+            padding: 100px 0;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(75, 0, 130, 0.05) 0%, transparent 50%);
+        }
+        
+        .testimonials-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background-color: var(--section-bg);
+            padding: 30px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--animation-timing);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 100px;
+            opacity: 0.1;
+            color: var(--primary-color);
+            line-height: 0;
+            font-family: Georgia, serif;
+        }
+        
+        .testimonial-card p {
+            color: #b0b0b0;
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .author-info h4 {
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+        
+        .author-info span {
+            color: #707070;
+            font-size: 14px;
+        }
+        
+        /* CTA Section */
+        .cta {
+    padding: 120px 0;
+    text-align: center;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)); /* Градиент от индиго к фиолетовому */
+    position: relative;
+    overflow: hidden;
+    color: white; /* Белый цвет для текста */
+}
+
+.cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.6) 0%, transparent 70%); /* Темный фон для улучшения контраста */
+}
+
+.cta-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: white; /* Белый цвет текста для заголовка */
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s var(--animation-timing);
+}
+
+.cta p {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    color: white; /* Белый цвет для параграфа */
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s 0.2s var(--animation-timing);
+}
+
+.btn-cta {
+    background-color: var(--primary-color); /* Фиолетовый фон кнопки */
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s 0.4s var(--animation-timing);
+    text-decoration: none; /* Убираем подчеркивание */
+    display: inline-block; /* Для кнопки в одной строке */
+}
+
+.btn-cta:hover {
+    background-color: var(--highlight-color); /* Светлый фиолетовый при наведении */
+    color: var(--text-color); /* Белый цвет текста на кнопке */
+}
+
+
+
+
+        
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            background-color: rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent-color) 50%, transparent 100%);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        
+        .footer-logo span {
+            color: var(--accent-color);
+        }
+        
+        .footer-info p {
+            color: #707070;
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--section-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+        
+        .footer-links h4 {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: var(--accent-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-links h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+        
+        .footer-links a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 60px;
+            color: #707070;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* Animation Utility Classes */
+        .visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .demo-area {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .steps {
+                gap: 40px;
+            }
+            
+            .step {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .footer-info p {
+                max-width: 100%;
+            }
+            
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">Easy<span>Shot</span></a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#shortcuts">Shortcuts</a>
+                    <a href="#testimonials">Reviews</a>
+                </div>
+                <a href="http://192.168.51.26:5000/easyshot_latest.zip" class="btn">Download</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Capture, Edit, Share. Effortlessly.</h1>
+            <p>EasyShot is a modern screenshot tool designed to simplify your workflow with powerful features and intuitive controls.</p>
+            <a href="http://192.168.51.26:5000/easyshot_latest.zip" class="btn">Download Now</a>
+            
+            <div class="demo-area">
+                <div class="screen-content"></div>
+                <div class="selection-area"></div>
+                <div class="crosshair"></div>
+                <div class="toolbar">
+                    <div class="tool-button">T</div>
+                    <div class="tool-button">⬌</div>
+                    <div class="tool-button">↗</div>
+                    <div class="tool-button">□</div>
+                    <div class="tool-button">✓</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">EasyShot comes packed with everything you need to capture, edit, and share screenshots efficiently.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Screenshot Capture</h3>
+                    <p>Easily capture any area of your screen using the intuitive crosshair cursor selection tool with pixel-perfect precision.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✏️</div>
+                    <h3>Advanced Editing Tools</h3>
+                    <p>Enhance your screenshots with rectangles, arrows, lines, brush strokes, and text annotations in any color or size.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Text Recognition (OCR)</h3>
+                    <p>Extract text from images with powerful OCR technology for easy copying and sharing, supporting over 20 languages.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Translation</h3>
+                    <p>Instantly translate recognized text to different languages using Google Translate integration with one-click access.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Color Picker</h3>
+                    <p>Choose the perfect color for your annotations with the intuitive color picker tool that works on any pixel.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Flexible Saving Options</h3>
+                    <p>Save your screenshots as PNG, JPG, or GIF with custom quality settings and automatic file naming.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>System Tray Integration</h3>
+                    <p>Access EasyShot instantly from the system tray for quick captures and configurations without disrupting your workflow.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Auto-Upload</h3>
+                    <p>Instantly upload screenshots to the cloud and get a shareable link copied to your clipboard automatically.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>Your screenshots belong to you alone. No data collection, no tracking, and end-to-end encryption for all cloud uploads.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Capturing the perfect screenshot is easier than ever with our intuitive workflow.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Trigger EasyShot</h3>
+                        <p>Press the global hotkey (default: Print Screen) or select from the system tray to activate EasyShot capture mode from anywhere.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Select Area</h3>
+                        <p>Click and drag to select the exact portion of the screen you want to capture. Use the crosshair for pixel-perfect precision.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Edit (Optional)</h3>
+                        <p>Use the popup toolbar to add annotations, highlights, text, or blur sensitive information before saving your screenshot.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Save or Share</h3>
+                        <p>Click Save to store locally, or use the Share button to upload and get an instant shareable link copied to your clipboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="shortcuts" class="shortcuts">
+        <div class="container">
+            <h2 class="section-title">Keyboard Shortcuts</h2>
+            <p class="section-subtitle">Work more efficiently with these time-saving keyboard shortcuts.</p>
+            <div class="shortcuts-container">
+                <table class="shortcuts-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Shortcut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Capture Screenshot</td>
+                            <td><span class="kbd">Print Screen</span>
+                        </tr>
+                        <tr>
+                            <td>Capture Full Screen</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">F</span></td>
+                        </tr>
+                        <tr>
+                            <td>Save Screenshot</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">S</span></td>
+                        </tr>
+                        <tr>
+                            <td>Copy to Clipboard</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">C</span></td>
+                        </tr>
+                        <tr>
+                            <td>Upload to Cloud</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">U</span></td>
+                        </tr>
+                        <tr>
+                            <td>Text Recognition (OCR)</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">T</span></td>
+                        </tr>
+                        <tr>
+                            <td>Undo</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">Z</span></td>
+                        </tr>
+                        <tr>
+                            <td>Redo</td>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">Y</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+    <div class="container testimonials-container">
+        <h2 class="section-title">What Users Say</h2>
+        <p class="section-subtitle">Join thousands of satisfied users who have streamlined their workflow with EasyShot.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p>"EasyShot has completely transformed how I work with screenshots. The editing tools are intuitive, and the cloud sharing feature saves me so much time every day."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background-image: url('{{ url_for('static', filename='images/katerina.jpg') }}');"></div>
+                    <div class="author-info">
+                        <h4>Katerina Zetta</h4>
+                        <span>Architect</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"As a developer, I need to share code snippets and UI issues frequently. EasyShot's OCR feature is a game-changer."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background-image: url('{{ url_for('static', filename='images/vladyslav.jpg') }}');"></div>
+                    <div class="author-info">
+                        <h4>Vladyslav Tivikov</h4>
+                        <span>Structural Engineer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"The keyboard shortcuts make capturing screenshots lightning fast. I've tried many tools, but nothing comes close to EasyShot's blend of simplicity and power."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background-image: url('{{ url_for('static', filename='images/alexandr.jpg') }}');"></div>
+                    <div class="author-info">
+                        <h4>Alexandr Krakhmalov</h4>
+                        <span>David Engineers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">Easy<span>Shot</span></div>
+                    <p>The modern screenshot tool designed to simplify your workflow with powerful features and intuitive controls.</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">F</a>
+                        <a href="#" class="social-icon">T</a>
+                        <a href="#" class="social-icon">L</a>
+                        <a href="#" class="social-icon">G</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#shortcuts">Shortcuts</a></li>
+                        <li><a href="#">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 EasyShot. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.section-title, .section-subtitle, .feature-card, .step, .shortcuts-container, .testimonial-card, .cta h2, .cta p, .btn-cta');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Demo area animations
+            const demoArea = document.querySelector('.demo-area');
+            const selectionArea = document.querySelector('.selection-area');
+            const crosshair = document.querySelector('.crosshair');
+            const toolbar = document.querySelector('.toolbar');
+            let isSelecting = false;
+            
+            function updateCrosshair(e) {
+                const rect = demoArea.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                crosshair.style.left = `${x - 15}px`;
+                crosshair.style.top = `${y - 15}px`;
+            }
+            
+            demoArea.addEventListener('mousemove', function(e) {
+                updateCrosshair(e);
+                
+                if (isSelecting) {
+                    const rect = demoArea.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const startX = parseInt(selectionArea.dataset.startX);
+                    const startY = parseInt(selectionArea.dataset.startY);
+                    
+                    const width = Math.abs(x - startX);
+                    const height = Math.abs(y - startY);
+                    
+                    const left = Math.min(startX, x);
+                    const top = Math.min(startY, y);
+                    
+                    selectionArea.style.width = `${width}px`;
+                    selectionArea.style.height = `${height}px`;
+                    selectionArea.style.left = `${left}px`;
+                    selectionArea.style.top = `${top}px`;
+                }
+            });
+            
+            demoArea.addEventListener('mouseenter', function() {
+                crosshair.style.display = 'block';
+            });
+            
+            demoArea.addEventListener('mouseleave', function() {
+                crosshair.style.display = 'none';
+            });
+            
+            demoArea.addEventListener('mousedown', function(e) {
+                const rect = demoArea.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                isSelecting = true;
+                selectionArea.dataset.startX = x;
+                selectionArea.dataset.startY = y;
+                selectionArea.style.display = 'block';
+                selectionArea.style.left = `${x}px`;
+                selectionArea.style.top = `${y}px`;
+                selectionArea.style.width = '0';
+                selectionArea.style.height = '0';
+            });
+            
+            demoArea.addEventListener('mouseup', function() {
+                isSelecting = false;
+                
+                // Show toolbar
+                const selRect = selectionArea.getBoundingClientRect();
+                const demoRect = demoArea.getBoundingClientRect();
+                
+                toolbar.style.opacity = '1';
+                toolbar.style.pointerEvents = 'auto';
+            });
+            
+            // Initial animation
+            setTimeout(() => {
+                toolbar.style.opacity = '0';
+                toolbar.style.pointerEvents = 'none';
+                selectionArea.style.display = 'none';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
